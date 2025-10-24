@@ -8,11 +8,29 @@ export const test = (req,res) => {
    export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
+    if( !email || !password  || email === '' || password === ''){
+                return res.status(400).json({message: 'All fields are required'})
+            }
+    try{
     const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "Invalid Credentials" });
         }
-    console.log(req.body);
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: "Invalid Credentials" });
+        }
+        const token = jsonwebtoken.sign({ _id: user._id }, process.env.SIGN_JWT);
+
+        const {password: pass, ...rest} = user._doc;
+
+        res.status(200).json({ message: "Login successful" , user:rest , token}); 
+    }catch(error){
+        console.error(error);
+    res.status(500).json({ message: error.message || "Internal Server Error" });
+    }
+    //console.log(req.body);
    }
 
    export const registerUser = async (req,res) => {
@@ -23,10 +41,10 @@ export const test = (req,res) => {
         if (user) {
             return res.status(400).json({ message: "User already exists" });
         }
-/*
+
             if(!name || !email || !password || !phone || name === '' || email === '' || phone === ''|| password === ''){
                 return res.status(400).json({message: 'All fields are required'})
-            }*/
+            }
         
         const hashedPassword = await bcrypt.hash(password, 12);
         
