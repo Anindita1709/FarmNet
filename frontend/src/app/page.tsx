@@ -13,7 +13,7 @@ const page = () => {
             no middlemen, no unfair pricing, just pure farm-to-table goodness.
           </p>
            
-            <button className=" font-manrope font-xl bg-primary py-2 px-2 text-white">
+            <button className="bg-cyan-500 font-manrope font-xl bg-primary py-2 px-2 text-white">
               Join as a Farmer
             </button>
           

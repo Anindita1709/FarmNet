@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Axiosinstance from "../../../axiosconfig.js";
+import Axiosinstance from "../../../axiosconfig";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
