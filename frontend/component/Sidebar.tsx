@@ -83,7 +83,7 @@ const SideBar = () => {
             </div>
           </Link>
 
-          <Link href="/dashboard/orders" onClick={() => setSelected("Orders")}>
+          <Link href="/dashboard/myorders" onClick={() => setSelected("Orders")}>
             <div
               className={`flex items-center gap-3 rounded-md p-3 mt-2 cursor-pointer transition-all ${
                 selected === "Orders"
