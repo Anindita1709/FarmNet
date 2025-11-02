@@ -94,6 +94,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, farm
         userid: farmerId,
       };
 
+      console.log("🚀 productData sent to backend:", productData);
+
       await Axiosinstance.post("/products/addProduct", productData);
       onProductAdded();
       onClose();
