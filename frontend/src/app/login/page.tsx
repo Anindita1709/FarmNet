@@ -20,7 +20,7 @@ const Page = ({}: PageProps) => {
   const handleLogin = async () => {
 
     try {
-      const res = await axiosinstance.post("auth/loginFarmer", {
+      const res = await axiosinstance.post("/auth/loginFarmer", {
         email: email,
         password: password,
       });
@@ -40,7 +40,7 @@ const Page = ({}: PageProps) => {
   const HandleRegister = async()=>{
       try {
         
-       const res = await axiosinstance.post("auth/registerFarmer",{
+       const res = await axiosinstance.post("/auth/registerFarmer",{
           email:email,
           phone:phone,
           password:password
@@ -65,9 +65,13 @@ const Page = ({}: PageProps) => {
       } 
 
   }
+  console.log("Login page rendering...");
+
 
   return (
+    
     <div className=" flex w-full h-screen font-inter ">
+      
       <ToastContainer/>
       <Image
         className="w-[50%] h-screen"
@@ -105,7 +109,7 @@ const Page = ({}: PageProps) => {
                 onClick={() => {
                   handleLogin();
                 }}
-                className=" bg-primary text-white p-2 m-2"
+                className=" bg-green-600 text-white p-2 m-2"
               >
                 Login
               </button>
@@ -162,7 +166,7 @@ const Page = ({}: PageProps) => {
                 }else{
                   toast.error("Passwords do not match");
                 }
-              }} className=" bg-primary text-white p-2 m-2">
+              }} className="  bg-green-600 text-white p-2 m-2">
                 Register
               </button>
               <p>
