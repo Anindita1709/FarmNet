@@ -2,7 +2,7 @@ import productSchema from "../model/productsSchema.js";
 //import orderSchema from "../model/ordersSchema.js";
 //import paymentSchema from "../model/paymentSchema.js";
 //import User from "../model/userModel.js";
-//import Farmer from "../model/FarmerSchmea.js";
+import Farmer from "../model/FarmerSchema.js";
 
 // Add Product
 export const addProduct = async (req, res) => {
@@ -240,7 +240,7 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
-
+/*
 export const getSellerDetails = async (req, res) => {
   try {
     const { sellerId } = req.params;
@@ -250,5 +250,29 @@ export const getSellerDetails = async (req, res) => {
     res.json({ seller }).status(200);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
+  }
+};*/
+export const getSellerDetails = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+    console.log("🧩 Received sellerId:", sellerId);
+
+    // Validate ObjectId format
+    if (!sellerId || sellerId.length !== 24) {
+      return res.status(400).json({ message: "Invalid seller ID format" });
+    }
+
+    const seller = await Farmer.findById(sellerId).select("name email");
+
+    if (!seller) {
+      console.log("❌ Farmer not found in DB");
+      return res.status(404).json({ message: "Farmer not found" });
+    }
+
+    console.log("✅ Found farmer:", seller);
+    res.status(200).json({ farmer: seller });
+  } catch (error) {
+    console.error("🔥 Error fetching seller:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };

@@ -44,3 +44,15 @@ export const loginFarmer = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+export const getFarmerById = async (req, res) => {
+  try {
+    const farmer = await Farmer.findById(req.params.id).select("name email");
+    if (!farmer) {
+      return res.status(404).json({ message: "Farmer not found" });
+    }
+    res.status(200).json({ farmer });
+  } catch (error) {
+    console.error("Error fetching farmer:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -11,6 +11,7 @@ import MarketData from "./model/marketData.js";
 import marketFilterRoute from "./routes/marketFilterRoute.js";
 import marketDataRoutes from "./routes/marketDataRoutes.js"; // 👈 ADD THIS
 import productRoutes from "./routes/Productroutes.js";
+import orderRoutes from "./routes/OrderRoutes.js"
 //import marketRoute from "./routes/marketRoute.js";
 //let marketData = [];
 /*
@@ -88,3 +89,5 @@ app.use("/market-filters", marketFilterRoute);
 app.use('/api/auth', auth);
 app.use("/api/products", productRoutes);  
 console.log("✅ Product routes registered at /products");
+
+app.use("/api/orders", orderRoutes);

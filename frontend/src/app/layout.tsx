@@ -3,7 +3,8 @@ import { Geist, Geist_Mono  , Inter ,Manrope } from "next/font/google";
 import "./global.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { CartProvider } from "../context/CartContext";
+import Navbar from "../../component/UserNav.tsx";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -33,8 +34,13 @@ export default function RootLayout({
       <body
         className={` ${manrope.variable} ${inter.variable} antialiased`}
       >
-        
-        {children}
+         {/* ✅ Provide cart state globally */}
+        <CartProvider>
+          {/* ✅ Navbar visible everywhere with cart count */}
+          
+          {children}
+          <ToastContainer position="top-right" autoClose={2000} />
+        </CartProvider>
 
      
       </body>

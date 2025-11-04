@@ -9,6 +9,7 @@ import { toast, ToastContainer } from "react-toastify";
 interface PageProps {}
 
 const Page = ({}: PageProps) => {
+  const[name,setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +42,7 @@ const Page = ({}: PageProps) => {
       try {
         
        const res = await axiosinstance.post("/auth/registerFarmer",{
+        name:name,
           email:email,
           phone:phone,
           password:password
@@ -49,6 +51,7 @@ const Page = ({}: PageProps) => {
         console.log(data);
         setIslogin(true);
         toast.success("Account Created Successfully");
+        setName("");
         setEmail("");
         setPhone("");
         setPassword("");
@@ -131,6 +134,13 @@ const Page = ({}: PageProps) => {
 
           {!islogin && (
             <div className=" flex flex-col gap-1 mt-4">
+              <input
+                type="name"
+                placeholder="Name"
+                className=" border-2 border-gray-300 p-2 m-2"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
               <input
                 type="email"
                 placeholder="Email"

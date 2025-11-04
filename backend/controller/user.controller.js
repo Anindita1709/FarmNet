@@ -59,3 +59,26 @@ export const test = (req,res) => {
         res.json({ message:error }).status(500);
     }
    }
+export const getuserCart = async (req, res) => {
+    try {
+        const { userid } = req.params;
+        const user = await userSchema.findById(userid);
+        res.status(200).json({ cart: user.cart });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
+export const addProductToCart = async (req, res) => {
+    try {
+        const { userid, productid } = req.body;
+        const user = await userSchema.findById(userid);
+        user.cart.push({ productid });
+        await user.save();
+        res.status(200).json({ message: "Product added to cart" });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
+}
