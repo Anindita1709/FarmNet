@@ -1,46 +1,35 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
-interface CartItem {
+interface Product {
   _id: string;
   productName: string;
   productPrice: number;
-  productImage: string;
-  quantity: number;
+  stock?: number;
+  productDescription?: string;
+  productCategory?: string;
+  productImage?: string | string[];
+  sellerId?: string; // ✅ added seller reference
 }
 
 interface CartContextType {
-  cart: CartItem[];
-  addToCart: (item: CartItem) => void;
+  cart: Product[];
+  addToCart: (product: Product) => void;
   removeFromCart: (id: string) => void;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<Product[]>([]);
 
-  // ✅ Persist cart to localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) setCart(JSON.parse(saved));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (item: CartItem) => {
+  const addToCart = (product: Product) => {
     setCart((prev) => {
-      const existing = prev.find((p) => p._id === item._id);
-      if (existing) {
-        return prev.map((p) =>
-          p._id === item._id ? { ...p, quantity: p.quantity + 1 } : p
-        );
-      } else {
-        return [...prev, { ...item, quantity: 1 }];
-      }
+      const exists = prev.find((p) => p._id === product._id);
+      if (exists) return prev; // prevent duplicates
+      return [...prev, product];
     });
   };
 
@@ -48,8 +37,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCart((prev) => prev.filter((p) => p._id !== id));
   };
 
+  const clearCart = () => setCart([]);
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );
@@ -57,6 +48,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) throw new Error("useCart must be used inside CartProvider");
+  if (!context) throw new Error("useCart must be used within CartProvider");
   return context;
 };

@@ -4,12 +4,13 @@ import Image from "next/image";
 import Axiosinstance from "../../../axiosconfig";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+interface PageProps { }
 
-interface PageProps {}
+const Page = ({ }: PageProps) => {
 
-const Page = ({}: PageProps) => {
-  
   const [products, setProducts] = useState([]);
+  const { addToCart } = useCart();
   const fetchProducts = async () => {
     try {
       const res = await Axiosinstance.get("products/getProducts");
@@ -21,7 +22,7 @@ const Page = ({}: PageProps) => {
     }
   };
 
-  
+
 
   useEffect(() => {
     fetchProducts();
@@ -47,24 +48,24 @@ const Page = ({}: PageProps) => {
               products.map((product: any) => {
                 return (
                   <Link key={`landing/${product._id}`} href={`landing/${product._id}`}>
-                  <div
-                    onClick={() => {
-                       
-                    }}
-                    className="bg-white rounded-lg "
-                  >
-                    <Image
-                      className=" object-cover rounded-xl w-[200px] h-[200px] "
-                      src={product.productImage[0].trim()}
-                      alt="product"
-                      width={200}
-                      height={200}
-                    />
-                    <div className=" pt-2">
-                      <p>{product.productName}</p>
-                      <p>Rs : {product.productPrice} </p>
+                    <div
+                      onClick={() => {
+
+                      }}
+                      className="bg-white rounded-lg "
+                    >
+                      <Image
+                        className=" object-cover rounded-xl w-[200px] h-[200px] "
+                        src={product.productImage[0].trim()}
+                        alt="product"
+                        width={200}
+                        height={200}
+                      />
+                      <div className=" pt-2">
+                        <p>{product.productName}</p>
+                        <p>Rs : {product.productPrice} </p>
+                      </div>
                     </div>
-                  </div>
                   </Link>
                 );
               })}
