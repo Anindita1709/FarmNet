@@ -105,33 +105,7 @@ const [preview, setPreview] = useState<string | null>(null);
     });
     return response.data.url;
   };
-/*
-  const handleSubmit = async () => {
-    try {
-      setIsLoading(true);
-      let imageUrl = productData.image;
-      if (imgFile) imageUrl = await handleImgToCloud(imgFile);
 
-      const finalData: NewProduct = { ...productData, image: imageUrl, userid: farmerId };
-
-      if (isEdit && existingProduct?._id) {
-        await Axiosinstance.put(`/products/updateProduct/${existingProduct._id}`, finalData);
-        toast.success("✅ Product updated successfully!");
-      } else {
-        await Axiosinstance.post("/products/addProduct", finalData);
-        toast.success("✅ Product added successfully!");
-      }
-
-      onProductUpdated();
-      onClose();
-    } catch (error) {
-      toast.error("❌ Error saving product");
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-*/
 const handleSubmit = async () => {
   try {
     setIsLoading(true);

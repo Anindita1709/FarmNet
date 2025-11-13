@@ -1,80 +1,154 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+import { IndianRupee, Logs, Users, ClipboardList } from "lucide-react";
+import SideBar from "../../../../component/Sidebar";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend,
+} from "recharts";
 
-interface SalesData {
-  month: string;
-  sales: number;
+interface Summary {
+  totalOrders: number;
+  pendingOrders: number;
+  totalRevenue: number;
+  totalCustomers: number;
 }
 
-export default function AnalyticsPage() {
-  const [salesData, setSalesData] = useState<SalesData[]>([]);
+interface Order {
+  _id: string;
+  userid: string;
+  sellerId: string;
+  productid: string;
+  quantity: number;
+  totalAmount: number;
+  orderStatus: string;
+  orderDate: string;
+  verifiedOnBlockchain?: boolean;
+}
+
+interface RevenueData {
+  date: string;
+  revenue: number;
+  orders: number;
+}
+
+const AnalyticsPage = () => {
+  const [summary, setSummary] = useState<Summary>({
+    totalOrders: 0,
+    pendingOrders: 0,
+    totalRevenue: 0,
+    totalCustomers: 0,
+  });
+
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulated analytics data (you can replace with API call)
-    const data = [
-      { month: "Jan", sales: 1200 },
-      { month: "Feb", sales: 1900 },
-      { month: "Mar", sales: 800 },
-      { month: "Apr", sales: 2200 },
-      { month: "May", sales: 1700 },
-      { month: "Jun", sales: 2500 },
-    ];
-    setSalesData(data);
-    setLoading(false);
+    async function fetchData() {
+      try {
+        const summaryRes = await fetch("http://localhost:5000/api/analytics/summary");
+        const summaryData = await summaryRes.json();
+        setSummary(summaryData);
+
+        const recentRes = await fetch("http://localhost:5000/api/analytics/recent-orders");
+        const recentData = await recentRes.json();
+        setRecentOrders(recentData);
+
+        const revenueRes = await fetch("http://localhost:5000/api/analytics/revenue-trends");
+        const revenueTrendData = await revenueRes.json();
+        setRevenueData(revenueTrendData);
+      } catch (err) {
+        console.error("Failed to fetch analytics data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <p>Loading analytics...</p>
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
-  const totalSales = salesData.reduce((sum, item) => sum + item.sales, 0);
-
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Dashboard Analytics</h1>
+    <div className="bg-gray-200 font-inter min-h-screen p-5 flex gap-5">
+      <SideBar />
 
-      {/* Stats Section */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3 mb-8">
-        <div className="p-4 border rounded-lg text-center bg-green-50">
-          <h2 className="text-xl font-semibold text-green-700">Total Sales</h2>
-          <p className="text-2xl font-bold mt-2">₹{totalSales.toLocaleString()}</p>
+      <div className="flex-1">
+        <p className="text-xl font-bold mb-4">Analytics Dashboard</p>
+
+        {/* Summary Cards */}
+        <header className="flex flex-wrap gap-4">
+          <div className="bg-white p-4 rounded shadow flex-1 min-w-[200px]">
+            <p className="font-bold text-lg">Total Orders</p>
+            <p className="text-gray-500 text-sm">All time</p>
+            <div className="flex items-center gap-2 mt-2">
+              <Logs size={24} />
+              <p className="font-bold text-3xl">{summary.totalOrders}</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow flex-1 min-w-[200px]">
+            <p className="font-bold text-lg">Total Revenue</p>
+            <p className="text-gray-500 text-sm">All time</p>
+            <div className="flex items-center gap-2 mt-2">
+              <IndianRupee size={24} />
+              <p className="font-bold text-3xl">{summary.totalRevenue}</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow flex-1 min-w-[200px]">
+            <p className="font-bold text-lg">Total Customers</p>
+            <p className="text-gray-500 text-sm">All time</p>
+            <div className="flex items-center gap-2 mt-2">
+              <Users size={24} />
+              <p className="font-bold text-3xl">{summary.totalCustomers}</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow flex-1 min-w-[200px]">
+            <p className="font-bold text-lg">Pending Orders</p>
+            <p className="text-gray-500 text-sm">All time</p>
+            <div className="flex items-center gap-2 mt-2">
+              <ClipboardList size={24} />
+              <p className="font-bold text-3xl">{summary.pendingOrders}</p>
+            </div>
+          </div>
+        </header>
+
+        {/* Revenue Chart */}
+        <div className="mt-8 bg-white p-4 rounded shadow">
+          <h2 className="font-bold text-lg mb-4">Revenue & Orders Trend</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={Array.isArray(revenueData) ? revenueData : []}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="revenue" stroke="#8884d8" name="Revenue" />
+              <Line type="monotone" dataKey="orders" stroke="#82ca9d" name="Orders" />
+            </LineChart>
+          </ResponsiveContainer>
+
         </div>
 
-        <div className="p-4 border rounded-lg text-center bg-blue-50">
-          <h2 className="text-xl font-semibold text-blue-700">Avg Monthly</h2>
-          <p className="text-2xl font-bold mt-2">
-            ₹{Math.round(totalSales / salesData.length).toLocaleString()}
-          </p>
-        </div>
-
-        <div className="p-4 border rounded-lg text-center bg-yellow-50">
-          <h2 className="text-xl font-semibold text-yellow-700">Best Month</h2>
-          <p className="text-2xl font-bold mt-2">
-            {salesData.reduce((a, b) => (a.sales > b.sales ? a : b)).month}
-          </p>
-        </div>
-      </div>
-
-      {/* Chart Section */}
-      <div className="bg-white border rounded-lg p-4 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4">Sales Overview</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={salesData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="sales" stroke="#4F46E5" strokeWidth={3} />
-          </LineChart>
-        </ResponsiveContainer>
+       
       </div>
     </div>
   );
-}
+};
+
+export default AnalyticsPage;

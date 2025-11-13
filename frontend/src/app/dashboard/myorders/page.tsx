@@ -1,92 +1,171 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-
-interface Order {
-  id: string;
-  date: string;
-  total: number;
-  status: string;
-  items: number;
+interface Product {
+  productName: string;
+  productPrice: number;
+  productImage?: string;
 }
 
-export default function MyOrdersPage() {
+interface Buyer {
+  name: string;
+  email: string;
+  phone: string;
+}
+
+interface Order {
+  _id: string;
+  product: Product;
+  buyer: Buyer;
+  quantity: number;
+  totalAmount: number;
+  status: string;
+  transactionHash?: string;
+  createdAt: string;
+}
+
+const MyOrdersPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // ✅ Correctly extract farmer ID from localStorage
+  const farmerId =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("farmer") || "{}")._id
+      : null;
 
   useEffect(() => {
-    // Example: replace this with your API call
-    async function fetchOrders() {
+    const fetchOrders = async () => {
+      console.log("👨‍🌾 Farmer ID:", farmerId); // Debugging
+
+      if (!farmerId) {
+        setLoading(false);
+        setError("No farmer ID found. Please log in again.");
+        return;
+      }
+
       try {
-        // Fake data for now
-        const data: Order[] = [
-          { id: "001", date: "2025-10-01", total: 499, status: "Delivered", items: 3 },
-          { id: "002", date: "2025-10-12", total: 299, status: "Pending", items: 2 },
-        ];
-        setOrders(data);
+        const response = await axios.get(
+          `http://localhost:5000/api/orders/getOrdersByFarmer/${farmerId}`
+        );
+
+        //console.log("📦 Orders fetched:", response.data);
+        console.log("📦 Orders fetched:", JSON.stringify(response.data, null, 2));
+
+
+        if (response.data.success === false || !response.data.orders?.length) {
+          setOrders([]);
+        } else {
+          setOrders(response.data.orders || []);
+        }
       } catch (err) {
-        console.error("Error fetching orders:", err);
+        console.error("❌ Fetch error:", err);
+        setError("Failed to fetch orders");
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchOrders();
-  }, []);
+  }, [farmerId]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <p>Loading your orders...</p>
+      <div className="flex justify-center items-center h-64 text-gray-600 text-lg">
+        Loading your orders...
       </div>
     );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-600 mt-10">{error}</div>;
   }
 
   if (orders.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-64 text-gray-600">
-        <p>No orders found.</p>
-      </div>
-    );
+    return <div className="text-center text-gray-500 mt-10">No orders received yet.</div>;
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">My Orders</h1>
+    <div className="p-6 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-bold text-green-700 mb-6">My Orders</h1>
 
-      <table className="min-w-full border border-gray-300 text-left">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="py-2 px-4 border-b">Order ID</th>
-            <th className="py-2 px-4 border-b">Date</th>
-            <th className="py-2 px-4 border-b">Items</th>
-            <th className="py-2 px-4 border-b">Total (₹)</th>
-            <th className="py-2 px-4 border-b">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map((order) => (
-            <tr key={order.id} className="hover:bg-gray-50">
-              <td className="py-2 px-4 border-b">{order.id}</td>
-              <td className="py-2 px-4 border-b">{order.date}</td>
-              <td className="py-2 px-4 border-b">{order.items}</td>
-              <td className="py-2 px-4 border-b">₹{order.total}</td>
-              <td
-                className={`py-2 px-4 border-b font-medium ${
-                  order.status === "Delivered"
-                    ? "text-green-600"
-                    : order.status === "Pending"
-                    ? "text-yellow-600"
-                    : "text-red-600"
-                }`}
-              >
-                {order.status}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {orders.map((order) => (
+          <div
+            key={order._id}
+            className="border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition"
+          >
+            <div className="flex gap-4">
+              {order.product?.productImage ? (
+                <img
+                  src={order.product.productImage}
+                  alt={order.product.productName}
+                  className="w-24 h-24 object-cover rounded-lg"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-gray-200 flex items-center justify-center rounded-lg text-gray-500">
+                  No Image
+                </div>
+              )}
+
+              <div>
+                <h2 className="text-xl font-semibold">{order.product?.productName}</h2>
+                <p className="text-gray-700">
+                  Price: ₹{order.product?.productPrice} × {order.quantity}
+                </p>
+                <p className="text-gray-800 font-semibold mt-1">
+                  Total: ₹{order.totalAmount}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 border-t pt-3 text-sm text-gray-700">
+              <p>
+                <span className="font-semibold">Buyer:</span> {order.buyer?.name} (
+                {order.buyer?.email})
+              </p>
+              <p>
+                <span className="font-semibold">Phone:</span> {order.buyer?.phone}
+              </p>
+              <p>
+  <span className="font-semibold">Status:</span>{" "}
+  <span
+    className={`px-2 py-1 rounded-md text-white ${
+      order.status === "delivered" ? "bg-green-600" : "bg-yellow-500"
+    }`}
+  >
+    {order.status?.toUpperCase() || "PENDING"}
+  </span>
+</p>
+
+
+              {order.transactionHash && (
+                <p className="mt-1">
+                  <span className="font-semibold">Transaction:</span>{" "}
+                  <a
+                    href={`https://sepolia.etherscan.io/tx/${order.transactionHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    View on Blockchain
+                  </a>
+                </p>
+              )}
+
+              <p className="mt-1 text-gray-500 text-sm">
+                Ordered on {new Date(order.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default MyOrdersPage;

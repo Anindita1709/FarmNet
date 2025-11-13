@@ -1,5 +1,3 @@
-// Import your globals here
-// import "@/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import SideBar from "../../../component/Sidebar";

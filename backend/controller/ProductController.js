@@ -3,6 +3,7 @@ import productSchema from "../model/productsSchema.js";
 //import paymentSchema from "../model/paymentSchema.js";
 //import User from "../model/userModel.js";
 import Farmer from "../model/FarmerSchema.js";
+//import { addProduct as addProductOnChain } from "../blockchain/services/contract.service.js";
 
 // Add Product
 export const addProduct = async (req, res) => {
@@ -26,6 +27,18 @@ export const addProduct = async (req, res) => {
       sellerId: userid
     });
 
+     // Step 2: Record on blockchain
+     /*
+    try {
+      const priceInWei = Number(price) * 1e18; // convert ether to wei if your contract uses wei
+      const tx = await addProductOnChain(name, priceInWei);
+      product.blockchainTxHash = tx.transactionHash;
+      await product.save();
+      console.log("✅ Product added on blockchain:", tx.transactionHash);
+    } catch (chainError) {
+      console.error("⚠️ Blockchain transaction failed:", chainError.message);
+    }
+*/
     res.status(201).json({ success: true, product });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

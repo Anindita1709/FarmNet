@@ -31,9 +31,27 @@ const OrdersSchema = new mongoose.Schema({
     },
     orderDate: {
         type: Date,
-        required: true
-    }
-});
+        required: true,
+        default: Date.now,
+    },
+
+    // 🧩 Blockchain Fields
+  blockchainTxHash: {
+    type: String,
+    default: null, // stores the transaction hash after successful on-chain order
+  },
+  blockchainOrderId: {
+    type: Number,
+    default: null, // optional - if your smart contract emits an orderId
+  },
+  verifiedOnBlockchain: {
+    type: Boolean,
+    default: false, // set true when tx is confirmed
+  },
+},
+  { timestamps: true } // ✅ adds createdAt & updatedAt automatically
+
+);
 
 
 const orderSchema = mongoose.model('Orders', OrdersSchema);

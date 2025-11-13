@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-
+const cartItemSchema = new mongoose.Schema({
+  productid: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+  quantity: { type: Number, default: 1 },
+});
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -20,14 +23,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    walletAddress: {
+    type: String,
+    unique: true,
+    sparse: true // allows some users without it
+  },
     cart:[
-        {
-            productid: {
-                type: String,
-                required: true
-            }
-        }
-    ]
+        [cartItemSchema]
+    ],
+     // Add notification preferences
+  emailNotif: { type: Boolean, default: true },
+  smsNotif: { type: Boolean, default: false },
 });
 
 

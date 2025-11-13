@@ -1,10 +1,12 @@
+
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono  , Inter ,Manrope } from "next/font/google";
 import "./global.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CartProvider } from "../context/CartContext";
-import Navbar from "../../component/UserNav.tsx";
+//import Navbar from "../../component/UserNav.tsx";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],

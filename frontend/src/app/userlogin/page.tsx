@@ -35,9 +35,11 @@ const page = ({ }: PageProps) => {
       console.log(data);
 
       if (data.user) {
-        nav.push("/landing");
+        
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("userid", data.user._id); 
         toast.success("Login successful!");
+        nav.push("/landing");
       }
     } catch (error) {
       console.log(error);
