@@ -1,9 +1,4 @@
 import productSchema from "../model/productsSchema.js";
-//import orderSchema from "../model/ordersSchema.js";
-//import paymentSchema from "../model/paymentSchema.js";
-//import User from "../model/userModel.js";
-import Farmer from "../model/FarmerSchema.js";
-//import { addProduct as addProductOnChain } from "../blockchain/services/contract.service.js";
 
 // Add Product
 export const addProduct = async (req, res) => {
@@ -27,18 +22,8 @@ export const addProduct = async (req, res) => {
       sellerId: userid
     });
 
-     // Step 2: Record on blockchain
-     /*
-    try {
-      const priceInWei = Number(price) * 1e18; // convert ether to wei if your contract uses wei
-      const tx = await addProductOnChain(name, priceInWei);
-      product.blockchainTxHash = tx.transactionHash;
-      await product.save();
-      console.log("✅ Product added on blockchain:", tx.transactionHash);
-    } catch (chainError) {
-      console.error("⚠️ Blockchain transaction failed:", chainError.message);
-    }
-*/
+     // Record on blockchain
+    
     res.status(201).json({ success: true, product });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -68,33 +53,6 @@ export const getProductById = async (req, res) => {
   }
 };
 
-/*
-export const getProductById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log("🔍 getProductById called with ID:", id);
-
-    if (!id) {
-      return res.status(400).json({ success: false, message: "Product ID missing" });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid product ID format" });
-    }
-
-    const product = await productSchema.findById(id);
-
-    if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
-    }
-
-    res.status(200).json({ success: true, product });
-  } catch (error) {
-    console.error("❌ Error fetching product:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-*/
 // Get Products by Category
 export const getProductsByCategory = async (req, res) => {
   try {
@@ -106,94 +64,6 @@ export const getProductsByCategory = async (req, res) => {
   }
 };
 
-// Update Product
-/*
-export const updateProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, price, quantity, description, category, image } = req.body;
-
-    const updatedProduct = await productSchema.findByIdAndUpdate(
-      id,
-      {
-        productName: name,
-        productPrice: price,
-        stock: quantity,
-        productDescription: description,
-        productCategory: category,
-        productImage: image,
-      },
-      { new: true }
-    );
-
-    res.status(200).json({ success: true, product: updatedProduct });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Something went wrong" });
-  }
-}
-*/
-/*
-export const updateProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log("🧩 Product ID:", id);
-    console.log("🛠 Request Body:", req.body);
-
-    const {
-      productName,
-      productPrice,
-      stock,
-      productDescription,
-      productCategory,
-      productImage,
-      sellerId,
-    } = req.body;
-
-    if (!id) {
-      return res.status(400).json({ success: false, message: "Missing product ID" });
-    }
- // ✅ Validate numeric fields safely
-    const safePrice = Number(productPrice);
-    const safeStock = Number(stock);
-
-    if (isNaN(safePrice) || isNaN(safeStock)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Price and stock must be valid numbers" });
-    }
-    const updateData = {
-      productName,
-       productPrice: safePrice,
-      stock: safeStock,
-      productDescription,
-      productCategory,
-      productImage,
-      sellerId,
-    };
-
-    console.log("📦 Final update data:", updateData);
-
-    const updatedProduct = await productSchema.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updatedProduct) {
-      return res.status(404).json({ success: false, message: "Product not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "✅ Product updated successfully",
-      updated: updatedProduct,
-    });
-  } catch (error) {
-    console.error("❌ Backend update error:", error.message);
-    console.error(error.stack);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-*/
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -281,18 +151,7 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
-/*
-export const getSellerDetails = async (req, res) => {
-  try {
-    const { sellerId } = req.params;
-    console.log(sellerId);
-    
-    const seller = await Farmer.findById(sellerId);
-    res.json({ seller }).status(200);
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
-  }
-};*/
+
 export const getSellerDetails = async (req, res) => {
   try {
     const { sellerId } = req.params;
