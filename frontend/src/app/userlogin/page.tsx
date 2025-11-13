@@ -1,152 +1,120 @@
+
 "use client";
-import Image from "next/image";
-import { toast, ToastContainer } from "react-toastify";
-//import axiosinstance from "../../../axiosconfig";
-import axios from "axios";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
 
-interface PageProps { }
+interface PageProps {}
 
-const page = ({ }: PageProps) => {
-  const [name, setName] = useState("");
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [islogin, setIslogin] = useState(true);
+const Page = ({}: PageProps) => {
+  const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const nav = useRouter();
 
-  const axiosinstance = axios.create({
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const router = useRouter();
+
+  const axiosInstance = axios.create({
     baseURL: "http://localhost:5000/api/",
   });
+
   const handleLogin = async () => {
-
-    try {
-      setLoading(true); // start loading
-      const res = await axiosinstance.post("auth/login", {
-        email: email,
-        password: password,
-      });
-
-      const data = res.data;
-      console.log(data);
-
-      if (data.user) {
-        
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("userid", data.user._id); 
-        toast.success("Login successful!");
-        nav.push("/landing");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Login failed. Please check credentials.");
-    } finally {
-      setLoading(false); // stop loading
-    }
-  };
-  const HandleRegister = async () => {
     try {
       setLoading(true);
-      const res = await axiosinstance.post("auth/register", {
-        name: name,
-        email: email,
-        phone: phone,
-        password: password
-      })
+      const res = await axiosInstance.post("auth/login", { email, password });
       const data = res.data;
-      console.log(data);
-      setIslogin(true);
-      toast.success("Account Created Successfully");
+
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("userid", data.user._id);
+        toast.success("Login successful!");
+        router.push("/landing");
+      }
+    } catch (error) {
+      toast.error("Login failed. Please check credentials.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.post("auth/register", {
+        name,
+        email,
+        phone,
+        password,
+      });
+
+      toast.success("Account created successfully!");
+      setIsLogin(true);
       setName("");
       setEmail("");
       setPhone("");
       setPassword("");
       setConfirmPassword("");
-    } catch (error) {
-      // Safe error handling
+    } catch (error: any) {
       if (axios.isAxiosError(error)) {
-        // Axios error with a response
         toast.error(error.response?.data?.message || "Registration failed");
-      } else if (error instanceof Error) {
-        // Regular JS error
-        toast.error(error.message);
       } else {
-        // Unknown error type
-        toast.error("Something went wrong");
+        toast.error(error.message || "Something went wrong");
       }
-
-      console.log(error); // optional, for debugging
+      console.error(error);
     } finally {
-      setLoading(false); // stop loading
+      setLoading(false);
     }
-
   };
 
   return (
-    
-      
-      <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 ">
-        <ToastContainer />
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h1 className=" mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+    <div className="flex min-h-screen items-center justify-center px-6 py-12 bg-gray-50">
+      <ToastContainer />
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-center text-gray-900 mb-8">
+          <span className="text-cyan-500">FarmNet</span> {isLogin ? "Login" : "Register"}
+        </h1>
 
-            <span className=" text-primary">AgriChain</span> Account
-          </h1>
-        </div>
-        {islogin && (
-
-          <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <div>
-              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900 ">Email address</label>
-              <div className="mt-2">
-                <input
-                  type="email"
-
-                  className=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-cyan-500 sm:text-sm/6"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                  Password
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-cyan-500 sm:text-sm/6"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="mt-2">
-              <button
-                onClick={() => {
-                  handleLogin();
-                }}
-                className="cursor-pointer flex w-full justify-center rounded-md bg-cyan-500 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500"
-              >
-                {loading ? "Logging in..." : "Login"}
-
-              </button>
-            </div>
-            <p className="mt-10 text-center text-sm/6 text-gray-500">
+        {/* Login Form */}
+        {isLogin && (
+          <div className="flex flex-col gap-4">
+            <input
+              type="email"
+              placeholder="Email"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-2 focus:outline-cyan-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-2 focus:outline-cyan-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              onClick={handleLogin}
+              disabled={loading}
+              className={`w-full rounded-md bg-cyan-500 px-3 py-2 text-white font-semibold shadow hover:bg-cyan-800 focus:outline-2 focus:outline-cyan-500 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+            <p className="text-center text-gray-500">
               Don't have an account?{" "}
               <span
-                className=" text-primary cursor-pointer font-semibold text-cyan-500 hover:text-cyan-800"
+                className="text-cyan-500 cursor-pointer font-semibold hover:text-cyan-800"
                 onClick={() => {
-                  setIslogin(false)
+                  setIsLogin(false);
                   setEmail("");
-                  setPhone("");
                   setPassword("");
                 }}
               >
@@ -156,79 +124,81 @@ const page = ({ }: PageProps) => {
           </div>
         )}
 
-        {!islogin && (
-
-          <div className=" flex flex-col gap-1 mt-4">
+        {/* Register Form */}
+        {!isLogin && (
+          <div className="flex flex-col gap-4">
             <input
               type="text"
               placeholder="Name"
-              className="border-2 border-gray-300 p-2 m-2"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-2 focus:outline-cyan-500"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <input
               type="email"
               placeholder="Email"
-              className=" border-2 border-gray-300 p-2 m-2"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-2 focus:outline-cyan-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               type="text"
               placeholder="Phone"
-              className=" border-2 border-gray-300 p-2 m-2"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-2 focus:outline-cyan-500"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
             <input
               type="password"
               placeholder="Password"
-              className=" border-2 border-gray-300 p-2 m-2"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-2 focus:outline-cyan-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-
             <input
               type="password"
               placeholder="Confirm Password"
-              className=" border-2 border-gray-300 p-2 m-2"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-2 focus:outline-cyan-500"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
-            <button onClick={() => {
-              if (password === confirmPassword) {
-                HandleRegister();
-              } else {
-                toast.error("Passwords do not match");
-              }
-            }}
+
+            <button
+              onClick={() => {
+                if (password === confirmPassword) {
+                  handleRegister();
+                } else {
+                  toast.error("Passwords do not match");
+                }
+              }}
               disabled={loading}
-              className={
-                "bg-primary text-white p-2 m-2 " +
-                (loading ? "opacity-50 cursor-not-allowed" : "")
-              }
+              className={`w-full rounded-md bg-cyan-500 px-3 py-2 text-white font-semibold shadow hover:bg-cyan-800 focus:outline-2 focus:outline-cyan-500 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               {loading ? "Registering..." : "Register"}
             </button>
-            <p>
+            <p className="text-center text-gray-500">
               Already have an account?{" "}
               <span
-                className=" text-primary cursor-pointer"
-                onClick={() => setIslogin(true)}
+                className="text-cyan-500 cursor-pointer font-semibold hover:text-cyan-800"
+                onClick={() => {
+                  setIsLogin(true);
+                  setName("");
+                  setEmail("");
+                  setPhone("");
+                  setPassword("");
+                  setConfirmPassword("");
+                }}
               >
                 Login
               </span>
             </p>
           </div>
         )}
-
-
-
-
-
       </div>
-   
-  )
+    </div>
+  );
+};
 
-}
-export default page;
+export default Page;

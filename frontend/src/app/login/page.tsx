@@ -89,7 +89,7 @@ const Page = ({}: PageProps) => {
         <div>
           <h1 className=" text-2xl">
             {islogin ? "Login" : "Register"} Into Your{" "}
-            <span className=" text-primary">AgriChain</span> Account
+            <span className=" text-primary">FarmNet</span> Account
           </h1>
 
           {islogin && (

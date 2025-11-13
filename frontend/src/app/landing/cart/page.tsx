@@ -10,7 +10,7 @@ const CartPage = () => {
   const totalPrice = cart?.reduce(
     (acc: number, item: any) => acc + item.productPrice,
     0
-  ) ?? 0; // ✅ fallback to 0 in case cart is undefined
+  ) ?? 0; //  fallback to 0 in case cart is undefined
 
   return (
     <div className="px-10 py-6 font-inter">

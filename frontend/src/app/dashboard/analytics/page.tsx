@@ -89,7 +89,7 @@ const AnalyticsPage = () => {
       <div className="flex-1">
         <p className="text-xl font-bold mb-4">Analytics Dashboard</p>
 
-        {/* Summary Cards */}
+       
         <header className="flex flex-wrap gap-4">
           <div className="bg-white p-4 rounded shadow flex-1 min-w-[200px]">
             <p className="font-bold text-lg">Total Orders</p>
@@ -128,7 +128,7 @@ const AnalyticsPage = () => {
           </div>
         </header>
 
-        {/* Revenue Chart */}
+       
         <div className="mt-8 bg-white p-4 rounded shadow">
           <h2 className="font-bold text-lg mb-4">Revenue & Orders Trend</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -152,3 +152,4 @@ const AnalyticsPage = () => {
 };
 
 export default AnalyticsPage;
+

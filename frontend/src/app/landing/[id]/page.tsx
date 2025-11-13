@@ -31,22 +31,7 @@ const Page = () => {
    const { addToCart } = useCart();
 
   // ---------------- Fetch Product ----------------
-  /*
-  const fetchProduct = async () => {
-    try {
-      const res = await Axiosinstance.get(`/products/getProductById/${id}`);
-      const product: Product = res.data.product;
-      setProductdetails(product);
-      console.log("✅ Product:", product);
-
-      if (product?.sellerId) {
-        fetchSeller(product.sellerId);
-      }
-    } catch (error) {
-      console.error("❌ Error fetching product:", error);
-    }
-  };
-  */
+  
  const fetchProduct = async () => {
     try {
       const res = await Axiosinstance.get(`/products/getProductById/${id}`);
@@ -62,22 +47,7 @@ const Page = () => {
   };
 
   // ---------------- Fetch Seller ----------------
-  /*
-  const fetchSeller = async (sellerId: string) => {
-    try {
-      const res = await Axiosinstance.get(`products/getSellerDetails/${sellerId}`);
-      const farmer: Seller = res.data.farmer;
-      setSeller(farmer);
-      console.log("✅ Seller:", farmer);
-    } catch (error) {
-      console.error("❌ Error fetching seller:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchProduct();
-  }, []);
-*/
+  
 const fetchSeller = async (sellerId: string) => {
     try {
       const res = await Axiosinstance.get(`products/getSellerDetails/${sellerId}`);

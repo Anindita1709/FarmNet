@@ -10,7 +10,7 @@ interface Product {
   productDescription?: string;
   productCategory?: string;
   productImage?: string | string[];
-  sellerId?: string; // ✅ added seller reference
+  sellerId?: string; //  added seller reference
 }
 
 interface CartContextType {

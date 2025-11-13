@@ -1,9 +1,10 @@
 import express from "express";
-import orderSchema from '../model/ordersSchema.js';// Make sure this is your Order model
+import orderSchema from '../model/ordersSchema.js';
 
 const router = express.Router();
 
 // --- GET /api/analytics/summary ---
+
 router.get("/summary", async (req, res) => {
   try {
     const totalOrders = await orderSchema.countDocuments();
@@ -23,7 +24,9 @@ router.get("/summary", async (req, res) => {
   }
 });
 
+
 // --- GET /api/analytics/recent-orders ---
+
 router.get("/recent-orders", async (req, res) => {
   try {
     const orders = await orderSchema.find()
@@ -36,7 +39,10 @@ router.get("/recent-orders", async (req, res) => {
   }
 });
 
-// GET /api/analytics/revenue-trends?days=30
+
+
+// GET /api/analytics/revenue-trends?days=
+
 router.get("/revenue-trends", async (req, res) => {
   try {
     const days = parseInt(req.query.days) || 30;
@@ -69,6 +75,8 @@ router.get("/revenue-trends", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch revenue trends" });
   }
 });
+
+
 
 
 export default router;

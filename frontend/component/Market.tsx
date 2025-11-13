@@ -111,24 +111,7 @@ for (let i = 1; i <= count; i++) {
   }, []);
 
   // ---------------- Place order ----------------
-  /*
-  const placeOrder = async (farmer: string, productName: string) => {
-    if (!account) {
-      alert("Please connect your wallet first!");
-      return;
-    }
-    const web3 = getWeb3();
-    try {
-      await FarmNetOrderContract.methods
-        .placeOrder(farmer, productName, 1) // Example: 1 unit
-        .send({ from: account });
-      alert("Order placed successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Order failed. See console for details.");
-    }
-  };
-*/
+  
 const placeOrder = async (farmer: string, productName: string, amount: number = 1) => {
   if (!account) {
     alert("Please connect your wallet first!");

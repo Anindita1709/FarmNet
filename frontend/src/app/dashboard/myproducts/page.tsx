@@ -211,11 +211,6 @@ const handleSubmit = async () => {
 )}
 
 
-       {/*<input
-          type="file"
-          onChange={(e) => e.target.files && setImgFile(e.target.files[0])}
-          className="input-field mb-2 w-full border p-2 rounded"
-        />*/}
         <input
   type="file"
   accept="image/*"
@@ -223,7 +218,7 @@ const handleSubmit = async () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImgFile(file);
-      setPreview(URL.createObjectURL(file)); // 👈 preview image instantly
+      setPreview(URL.createObjectURL(file)); // preview image instantly
     }
   }}
   className="input-field mb-2 w-full border p-2 rounded"

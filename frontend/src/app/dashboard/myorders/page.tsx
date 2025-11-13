@@ -32,7 +32,6 @@ const MyOrdersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ Correctly extract farmer ID from localStorage
   const farmerId =
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("farmer") || "{}")._id
@@ -40,8 +39,6 @@ const MyOrdersPage = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      console.log("👨‍🌾 Farmer ID:", farmerId); // Debugging
-
       if (!farmerId) {
         setLoading(false);
         setError("No farmer ID found. Please log in again.");
@@ -53,15 +50,7 @@ const MyOrdersPage = () => {
           `http://localhost:5000/api/orders/getOrdersByFarmer/${farmerId}`
         );
 
-        //console.log("📦 Orders fetched:", response.data);
-        console.log("📦 Orders fetched:", JSON.stringify(response.data, null, 2));
-
-
-        if (response.data.success === false || !response.data.orders?.length) {
-          setOrders([]);
-        } else {
-          setOrders(response.data.orders || []);
-        }
+        setOrders(response.data.orders || []);
       } catch (err) {
         console.error("❌ Fetch error:", err);
         setError("Failed to fetch orders");
@@ -112,7 +101,7 @@ const MyOrdersPage = () => {
                 </div>
               )}
 
-              <div>
+              <div className="flex-1">
                 <h2 className="text-xl font-semibold">{order.product?.productName}</h2>
                 <p className="text-gray-700">
                   Price: ₹{order.product?.productPrice} × {order.quantity}
@@ -131,29 +120,30 @@ const MyOrdersPage = () => {
               <p>
                 <span className="font-semibold">Phone:</span> {order.buyer?.phone}
               </p>
-              <p>
-  <span className="font-semibold">Status:</span>{" "}
-  <span
-    className={`px-2 py-1 rounded-md text-white ${
-      order.status === "delivered" ? "bg-green-600" : "bg-yellow-500"
-    }`}
-  >
-    {order.status?.toUpperCase() || "PENDING"}
-  </span>
-</p>
-
+              <p className="mt-1">
+                <span className="font-semibold">Status:</span>{" "}
+                <span
+                  className={`px-2 py-1 rounded-md text-white ${
+                    order.status === "delivered" ? "bg-green-600" : "bg-yellow-500"
+                  }`}
+                >
+                  {order.status?.toUpperCase() || "PENDING"}
+                </span>
+              </p>
 
               {order.transactionHash && (
                 <p className="mt-1">
                   <span className="font-semibold">Transaction:</span>{" "}
-                  <a
-                    href={`https://sepolia.etherscan.io/tx/${order.transactionHash}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
+                  <span
+                    className="text-blue-600 underline cursor-pointer break-all"
+                    title={order.transactionHash}
+                    onClick={() => {
+                      navigator.clipboard.writeText(order.transactionHash || "");
+                      alert("Transaction hash copied!");
+                    }}
                   >
-                    View on Blockchain
-                  </a>
+                    {`${order.transactionHash.slice(0, 10)}...${order.transactionHash.slice(-10)}`}
+                  </span>
                 </p>
               )}
 
@@ -169,3 +159,5 @@ const MyOrdersPage = () => {
 };
 
 export default MyOrdersPage;
+
+

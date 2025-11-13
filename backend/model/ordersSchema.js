@@ -35,7 +35,7 @@ const OrdersSchema = new mongoose.Schema({
         default: Date.now,
     },
 
-    // 🧩 Blockchain Fields
+    //  Blockchain Fields
   blockchainTxHash: {
     type: String,
     default: null, // stores the transaction hash after successful on-chain order
